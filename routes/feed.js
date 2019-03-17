@@ -65,7 +65,7 @@ Router.get("/np/original", (req, res, next) => {
 
           const article = {
             title: title,
-            id: id,
+            id: `https://newspicks.com/news/${id}`,
             link: `https://newspicks.com/news/${id}`,
             description: title,
             content: content,
