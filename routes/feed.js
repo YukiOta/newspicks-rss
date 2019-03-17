@@ -69,7 +69,7 @@ Router.get("/np/original", (req, res, next) => {
             link: `https://newspicks.com/news/${id}`,
             description: title,
             content: content,
-            date: moment(String(key), "YYYYMMDDHHmmssSSS"),
+            date: moment(String(key), "YYYYMMDDHHmmssSSS").toDate(),
             image: `https://contents.newspicks.com/images/news/${id}`
           };
 
@@ -86,9 +86,10 @@ Router.get("/np/original", (req, res, next) => {
       });
       module.parent.exports.set("last_update_at", latest_updated_ts_at);
       res.set({
-        "Content-Type": "application/atom+xml"
+        // "Content-Type": "application/atom+xml"
+        "Content-Type": "application/xml"
       });
-      res.status(200).send(feed.atom1());
+      res.status(200).send(feed.rss2());
       // } else {
       //   res.status(304).end();
       // }
