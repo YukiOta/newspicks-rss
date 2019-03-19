@@ -7,8 +7,8 @@ const Feed = require("feed").Feed;
 const feed = new Feed({
   title: "NewsPicks original articles feed",
   description: "This is my personal feed!",
-  id: "https://newspicks.com/series",
-  link: "https://newspicks.com/series",
+  id: "https://newspicks.com",
+  link: "https://newspicks.com",
   language: "ja",
   copyright: "All rights reserved 2019, yukioh",
   generator: "For personal use",
@@ -16,10 +16,18 @@ const feed = new Feed({
     name: "Yuki Ota"
   }
 });
+// TODO: add slugs
+// const slugs = {
+//   top: "",
+//   original: "series",
+//   technology: "theme-news/technology"
+// };
+// const slugsArr = Object.keys(slugs);
 
 Router.get("/np/original", (req, res, next) => {
+  const slug = "series"
   const options = {
-    uri: "https://newspicks.com/series",
+    uri: `https://newspicks.com/${slug}`,
     method: "GET",
     qs: {
       from: Number(
@@ -34,7 +42,6 @@ Router.get("/np/original", (req, res, next) => {
 
   request(options, (error, response, body) => {
     if (error) {
-      // error
       console.log("error: ", error);
       next();
     }
@@ -48,8 +55,6 @@ Router.get("/np/original", (req, res, next) => {
       ).format("X");
       const last_updated_ts_at = module.parent.exports.get("last_update_at");
 
-      // if (latest_updated_ts_at > last_updated_ts_at) {
-      // new articles
       $(".news-card").each((i, elem) => {
         const id = $(elem).data().id;
         const key = $(elem).data().key;
@@ -67,7 +72,7 @@ Router.get("/np/original", (req, res, next) => {
             title: title,
             id: `https://newspicks.com/news/${id}`,
             link: `https://newspicks.com/news/${id}`,
-            description: title,
+            description: content,
             content: content,
             date: moment(String(key), "YYYYMMDDHHmmssSSS").toDate(),
             image: `https://contents.newspicks.com/images/news/${id}`
@@ -86,13 +91,9 @@ Router.get("/np/original", (req, res, next) => {
       });
       module.parent.exports.set("last_update_at", latest_updated_ts_at);
       res.set({
-        // "Content-Type": "application/atom+xml"
         "Content-Type": "application/xml"
       });
       res.status(200).send(feed.rss2());
-      // } else {
-      //   res.status(304).end();
-      // }
     } catch (error) {
       console.log("error: ", error);
       next();
